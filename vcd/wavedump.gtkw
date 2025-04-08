@@ -1,0 +1,83 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Mon Mar 31 04:02:16 2025
+[*]
+[dumpfile] "/home/justin/Desktop/AIH_final/vcd/top.vcd"
+[dumpfile_mtime] "Mon Mar 31 04:01:40 2025"
+[dumpfile_size] 1929084
+[savefile] "/home/justin/Desktop/AIH_final/vcd/wavedump.gtkw"
+[timestart] 871800
+[size] 2932 1583
+[pos] -1 -1
+*-16.000000 1247300 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TESTBED_top.
+[treeopen] TESTBED_top.U_top.
+[treeopen] TESTBED_top.U_top.TPU.
+[treeopen] TESTBED_top.U_top.TPU.gen_mult[0].
+[treeopen] TESTBED_top.U_top.TPU.gen_mult[1023].
+[treeopen] TESTBED_top.U_top.TPU.gen_mult[1].
+[treeopen] TESTBED_top.U_top.TPU.gen_mult[2].
+[treeopen] TESTBED_top.U_top.TPU.gen_mult[30].
+[treeopen] TESTBED_top.U_top.TPU.gen_mult[31].
+[treeopen] TESTBED_top.U_top.TPU.gen_mult[32].
+[treeopen] TESTBED_top.U_top.TPU.gen_mult[64].
+[sst_width] 493
+[signals_width] 760
+[sst_expanded] 1
+[sst_vpaned_height] 881
+@800200
+-top
+@28
+TESTBED_top.U_top.clk
+TESTBED_top.U_top.rst_n
+@22
+TESTBED_top.U_top.state_cs[3:0]
+TESTBED_top.U_top.state_ns[3:0]
+@24
+TESTBED_top.U_top.counter[5:0]
+@1000200
+-top
+@800200
+-tpu
+@22
+TESTBED_top.U_top.TPU.state_cs[3:0]
+TESTBED_top.U_top.TPU.state_ns[3:0]
+@24
+TESTBED_top.U_top.TPU.counter[9:0]
+@28
+TESTBED_top.U_top.TPU.in_ready
+TESTBED_top.U_top.TPU.in_valid
+@22
+TESTBED_top.U_top.TPU.a[255:0]
+TESTBED_top.U_top.TPU.b[255:0]
+@28
+TESTBED_top.U_top.TPU.out_ready
+TESTBED_top.U_top.TPU.out_valid
+@22
+TESTBED_top.U_top.TPU.out[255:0]
+@1000200
+-tpu
+@c00200
+-PE
+@22
+TESTBED_top.U_top.TPU.\mult_pe[0][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[1][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[2][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[3][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[32][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[33][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[34][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[1020][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[1021][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[1022][7:0]
+TESTBED_top.U_top.TPU.\mult_pe[1023][7:0]
+@1401200
+-PE
+@24
+TESTBED_top.U_top.gbuffer_idx_o[4:0]
+@28
+TESTBED_top.U_top.gbuffer_wr_en_o
+@22
+TESTBED_top.U_top.gbuffer_in_o[255:0]
+[pattern_trace] 1
+[pattern_trace] 0
