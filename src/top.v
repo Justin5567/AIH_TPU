@@ -124,17 +124,6 @@ end
 wire tpu_start;
 assign tpu_start = (state_cs==IDLE && state_ns==RD);
 
-always@(*)begin
-    if(state_cs==RD) begin
-        tpu_data_a = gbuffer_out_a;
-        tpu_data_b = gbuffer_out_b;
-    end
-    else begin
-        tpu_data_a = 0;
-        tpu_data_b = 0;
-    end
-
-end
 
 //================================================================
 // Global Buffer
