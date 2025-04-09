@@ -966,7 +966,7 @@ end
 
 genvar pe_idx;
 generate
-    for(pe_idx = 0; pe_idx<`PE_SIZE; pe_idx = pe_idx+1)begin
+    for(pe_idx = 0; pe_idx<`PE_SIZE; pe_idx = pe_idx+1)begin :PE_GEN
         always@(posedge clk or negedge rst_n)begin
             if(!rst_n)
                 mult_pe[pe_idx]<=0;

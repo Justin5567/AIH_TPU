@@ -121,7 +121,7 @@ always@(*)begin
         tpu_data_b  = 0;
     end
 end
-
+wire tpu_start;
 assign tpu_start = (state_cs==IDLE && state_ns==RD);
 
 always@(*)begin
