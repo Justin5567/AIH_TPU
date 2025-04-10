@@ -113,8 +113,8 @@ end
 
 always@(*)begin
     if(state_cs==RD)begin
-        tpu_data_a  = gbuffer_in_a;
-        tpu_data_b  = gbuffer_in_b;
+        tpu_data_a  = gbuffer_out_a;
+        tpu_data_b  = gbuffer_out_b;
     end
     else begin
         tpu_data_a  = 0;
