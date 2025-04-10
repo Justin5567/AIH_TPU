@@ -22,14 +22,10 @@ VERILOG=iverilog
 # Directories Declarations                                                     #
 #------------------------------------------------------------------------------#
 CUR_DIR=$(PWD)
-TB_DIR=tb
-BUILD_DIR=build
-SRC_DIR=src
-INC_DIR=inc
 
 main:
 	python3 ./testcase/matmul.py aih
-	$(VERILOG) -o ./vvp/top.vvp ./testbed/TESTBED_top.v -I ./
+	$(VERILOG) -o ./vvp/top.vvp ./testbed/TESTBED_top.v -I ./ -DIVERILOG -DFSDB
 	vvp ./vvp/top.vvp
 clean:
 	rm -rf build

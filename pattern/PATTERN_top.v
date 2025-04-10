@@ -19,9 +19,12 @@ module PATTERN_top(
 	clk,
 	rst_n,
 	in_valid,
+    gbuff_a,
+    gbuff_b,
 	m,
     n,
     k,
+    gbuff_out,
     out_valid
 );
 
@@ -34,9 +37,10 @@ output reg in_valid;
 output reg [4:0] m;
 output reg [4:0] n;
 output reg [4:0] k;
+output reg [255:0]gbuff_a,gbuff_b;
 
 input out_valid;
-
+input [255:0]gbuff_out;
 // ===============================================================
 // Parameters & Integer Declaration
 // ===============================================================
@@ -48,6 +52,8 @@ integer i, j;
 integer err;
 integer cycles;
 parameter PATNUM = 1; // change after
+reg [`WORD_SIZE-1:0] gbuff_a_reg [`GBUFF_ADDR_SIZE-1:0];
+reg [`WORD_SIZE-1:0] gbuff_b_reg [`GBUFF_ADDR_SIZE-1:0];
 reg [`WORD_SIZE-1:0] GOLDEN [`GBUFF_ADDR_SIZE-1:0];
 // reg [`WORD_SIZE-1:0] GBUFF [`GBUFF_ADDR_SIZE-1:0];
 // ===============================================================
@@ -72,8 +78,8 @@ initial begin
 	reset_task;
 
     err = 0;
-    $readmemb("./build/matrix_a.bin", TESTBED_top.U_top.GBUFF_A.gbuff);
-    $readmemb("./build/matrix_b.bin", TESTBED_top.U_top.GBUFF_B.gbuff);
+    $readmemb("./build/matrix_a.bin", gbuff_a_reg);
+    $readmemb("./build/matrix_b.bin", gbuff_b_reg);
     $readmemb("./build/golden.bin", GOLDEN); 
 	// for (i = 0; i < 32; i=i+1) begin
     //  $display("%d: %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b %b", i,
@@ -89,9 +95,7 @@ initial begin
 	@(negedge clk);
 	for (patcount=0;patcount<PATNUM;patcount=patcount+1) begin		
 		$display("\033[1;44mStart Pattern %02d\033[0;1m\n\033[0;33m[Input Data]\033[0;0m",patcount);
-        in_valid = 1'b1;
-        @(negedge clk);
-        in_valid = 1'b0;
+        input_task;
         wait_out_valid_task;
 		$display();
 		check_answer;
@@ -118,16 +122,28 @@ end
 // ===============================================================
 // TASK
 // ===============================================================
+task input_task; begin
+    in_valid = 1'b1;
+    for(i = 0; i<32; i=i+1)begin
+        gbuff_a = gbuff_a_reg[i];
+        gbuff_b = gbuff_b_reg[i];
+        @(negedge clk);
+    end
+    gbuff_a = 'bx;
+    gbuff_b = 'bx;
+    in_valid = 1'b0;
+end endtask
+
 integer sel0;
 reg [7:0] golden_byte, out_byte;
 task check_answer ; begin
-    #(10);
+    // #(10);
     for (i = 0; i < 32; i=i+1) begin
         for( j = 0 ; j < 32; j=j+1)begin
             sel0 = 256-8*(j+1);
             golden_byte = GOLDEN[i] >> sel0;
-            out_byte    = TESTBED_top.U_top.GBUFF_OUT.gbuff[i] >> sel0;
-            if(golden_byte!=out_byte)begin
+            out_byte    = gbuff_out >> sel0;
+            if(golden_byte!=out_byte || out_byte ===8'bx)begin
                 $display ("----------------------------------------------------------------------------------------------------------------------");
                 $display ("                                                Error at [%2d,%2d]!                            						 ",i,j);
                 $display ("                                                Your Answer:    %3d, %8b                                          ",out_byte,out_byte);
@@ -138,12 +154,13 @@ task check_answer ; begin
                 err = err + 1;
             end
             else begin
-                $write("%2d, ",out_byte);
+                $write("%3d, ",out_byte);
             end
-
+        
             
         end
         $display();
+        @(negedge clk);
     end
 end endtask
 
