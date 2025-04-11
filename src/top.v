@@ -183,8 +183,8 @@ always@(*)begin
         gbuffer_in_b = gbuff_b;
     end
     else begin
-        gbuffer_in_a = 32'bz;
-        gbuffer_in_b = 32'bz;
+        gbuffer_in_a = 0;
+        gbuffer_in_b = 0;
     end
 end
 
