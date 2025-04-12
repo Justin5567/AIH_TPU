@@ -663,38 +663,6 @@ always@(posedge clk or negedge rst_n)begin
         end
     end
     else if(state_ns==OP)begin
-        // side_buffer_b_w0         <= b[   7:   0];
-        // side_buffer_b_w1    [ 1] <= b[  15:   8];
-        // side_buffer_b_w2    [ 2] <= b[  23:  16];
-        // side_buffer_b_w3    [ 3] <= b[  31:  24];
-        // side_buffer_b_w4    [ 4] <= b[  39:  32];
-        // side_buffer_b_w5    [ 5] <= b[  47:  40];
-        // side_buffer_b_w6    [ 6] <= b[  55:  48];
-        // side_buffer_b_w7    [ 7] <= b[  63:  56];
-        // side_buffer_b_w8    [ 8] <= b[  71:  64];
-        // side_buffer_b_w9    [ 9] <= b[  79:  72];
-        // side_buffer_b_w10   [10] <= b[  87:  80];
-        // side_buffer_b_w11   [11] <= b[  95:  88];
-        // side_buffer_b_w12   [12] <= b[ 103:  96];
-        // side_buffer_b_w13   [13] <= b[ 111: 104];
-        // side_buffer_b_w14   [14] <= b[ 119: 112];
-        // side_buffer_b_w15   [15] <= b[ 127: 120];
-        // side_buffer_b_w16   [16] <= b[ 135: 128];
-        // side_buffer_b_w17   [17] <= b[ 143: 136];
-        // side_buffer_b_w18   [18] <= b[ 151: 144];
-        // side_buffer_b_w19   [19] <= b[ 159: 152];
-        // side_buffer_b_w20   [20] <= b[ 167: 160];
-        // side_buffer_b_w21   [21] <= b[ 175: 168];
-        // side_buffer_b_w22   [22] <= b[ 183: 176];
-        // side_buffer_b_w23   [23] <= b[ 191: 184];
-        // side_buffer_b_w24   [24] <= b[ 199: 192];
-        // side_buffer_b_w25   [25] <= b[ 207: 200];
-        // side_buffer_b_w26   [26] <= b[ 215: 208];
-        // side_buffer_b_w27   [27] <= b[ 223: 216];
-        // side_buffer_b_w28   [28] <= b[ 231: 224];
-        // side_buffer_b_w29   [29] <= b[ 239: 232];
-        // side_buffer_b_w30   [30] <= b[ 247: 240];
-        // side_buffer_b_w31   [31] <= b[ 255: 248];
         side_buffer_b_w0         <= b[255:248];
         side_buffer_b_w1    [ 1] <= b[247:240];
         side_buffer_b_w2    [ 2] <= b[239:232];

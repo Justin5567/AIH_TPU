@@ -46,16 +46,16 @@ output reg [255:0] gbuff_out;
 
 // parameter
 parameter IDLE  = 4'd0;
-parameter LOAD  = 4'd7;
-parameter IDLE3 = 4'd8;
-parameter RD    = 4'd1;
-parameter IDLE2 = 4'd2;
-parameter OP    = 4'd3;
-parameter WR    = 4'd5;
-parameter IDLE4 = 4'd9;
-parameter IDLE5 = 4'd11;
-parameter OUTPUT= 4'd10;
-parameter DONE  = 4'd6;
+parameter LOAD  = 4'd1;
+parameter IDLE3 = 4'd2;
+parameter RD    = 4'd3;
+parameter IDLE2 = 4'd4;
+parameter OP    = 4'd5;
+parameter WR    = 4'd6;
+parameter IDLE4 = 4'd7;
+parameter IDLE5 = 4'd8;
+parameter OUTPUT= 4'd9;
+parameter DONE  = 4'd10;
 
 // reg
 reg [3:0] state_cs, state_ns;
@@ -164,7 +164,7 @@ global_buffer GBUFF_OUT(  .clk     (clk      ),
 // assign gbuffer_wr_en_b = 0; // always read
 
 always@(*)begin
-    if(in_valid)begin
+    if(state_ns==LOAD)begin
         gbuffer_wr_en_a = 1;
         gbuffer_wr_en_b = 1;
     end
@@ -174,8 +174,6 @@ always@(*)begin
     end
 end 
 
-// assign gbuffer_in_a = 32'bz;
-// assign gbuffer_in_b = 32'bz;
 
 always@(*)begin
     if(state_ns==LOAD)begin
@@ -225,11 +223,11 @@ end
 //================================================================
 // MAIN DESIGN
 //================================================================
-assign LOAD_done = counter==32;
-assign RD_done = counter==32;
-assign OP_done = (state_cs==OP && tpu_out_valid);
-assign WR_done = counter==32;
-assign OUTPUT_done = counter==33;
+assign LOAD_done    = counter==32;
+assign RD_done      = counter==32;
+assign OP_done      = (state_cs==OP && tpu_out_valid);
+assign WR_done      = counter==32;
+assign OUTPUT_done  = counter==33;
 //FSM
 always@(posedge clk or negedge rst_n)begin
     if(!rst_n)
@@ -251,7 +249,7 @@ always@(*)begin
         IDLE5   :   state_ns = OUTPUT;
         OUTPUT  :   state_ns = (OUTPUT_done)? DONE:OUTPUT;
         DONE    :   state_ns = IDLE;
-        default:    state_ns = state_cs;   
+        //default:    state_ns = state_cs;   
     endcase
 end
 

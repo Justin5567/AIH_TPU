@@ -66,7 +66,7 @@ initial begin
     `endif
     
     `ifdef GATE
-        $sdf_annotate("top_syn.sdf", u_ESCAPE);
+        $sdf_annotate("./synthesis/top_syn.sdf", U_top);
         $fsdbDumpfile("top_syn.fsdb");
         $fsdbDumpvars(0,"+mda"); 
     `endif
