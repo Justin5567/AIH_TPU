@@ -27,7 +27,7 @@ module global_buffer(clk, rst_n, wr_en, index, data_in, data_out);
 //----------------------------------------------------------------------------//
   always @ (posedge clk or negedge rst_n) begin
     if(!rst_n)begin
-      for(i=0; i<=256; i=i+1)
+      for(i=0; i<=255; i=i+1)
         gbuff[i] <= 32'd0;
     end
     else begin
