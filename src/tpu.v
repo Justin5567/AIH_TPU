@@ -13,7 +13,7 @@
 
 `include "src/define.v"
 `include "src/mult.v"
-`include "src/GATED_OR.v"
+// `include "src/GATED_OR.v"
 module tpu(
 	clk,
 	rst_n,
@@ -141,8 +141,8 @@ reg [`DATA_SIZE-1:0]side_buffer_b_w30  [0:30];
 reg [`DATA_SIZE-1:0]side_buffer_b_w31  [0:31];
 
 
-wire cg_clk[0:`PE_SIZE-1];
-reg  cg_pe [0:`PE_SIZE-1];
+// wire cg_clk[0:`PE_SIZE-1];
+// reg  cg_pe [0:`PE_SIZE-1];
 
 // memory
 integer i,j;
@@ -807,7 +807,6 @@ end
 // endgenerate
 
 // divide pe into four chunk
-// x: 0~15 16~31 31~16 15~0
 // genvar cg_pe_idx;
 // generate
 //     for(cg_pe_idx = 0 ; cg_pe_idx < `PE_SIZE; cg_pe_idx = cg_pe_idx + 1)begin
@@ -816,6 +815,25 @@ end
 //         end
 //     end
 // endgenerate
+
+//ver2 cg
+reg cg;
+wire cg_clk;
+always@(*)begin
+    if(state_cs==IDLE || state_cs==DONE)
+        cg = 1;
+    else 
+        cg = 0;
+end
+
+
+GATED_OR GATED_tpu_pe (
+            .CLOCK(clk),
+            .SLEEP_CTRL(cg),
+            .RST_N(rst_n),
+            .CLOCK_GATED(cg_clk));
+
+
 
 // Mult
 genvar m;
@@ -935,7 +953,7 @@ end
 genvar pe_idx;
 generate
     for(pe_idx = 0; pe_idx<`PE_SIZE; pe_idx = pe_idx+1)begin :PE_GEN
-        always@(posedge clk or negedge rst_n)begin
+        always@(posedge cg_clk or negedge rst_n)begin
             if(!rst_n)
                 mult_pe[pe_idx]<=0;
             else if(state_ns==IDLE)

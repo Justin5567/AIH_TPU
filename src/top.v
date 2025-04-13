@@ -14,7 +14,7 @@
 `include "src/define.v"
 `include "src/global_buffer.v"
 `include "src/tpu.v"
-
+`include "src/GATED_OR.v"
 module top(
 	clk,
 	rst_n,
@@ -96,6 +96,40 @@ wire tpu_done;
 // SUB MODULE
 //================================================================
 
+//ver2 cg
+reg cg_ab;
+wire cg_clk_ab;
+always@(*)begin
+    if(state_cs==IDLE || state_cs==LOAD || state_cs==IDLE3|| state_cs==RD)
+        cg_ab = 0; 
+    else 
+        cg_ab = 1; 
+end
+
+
+GATED_OR GATED_top_gbuff_ab (
+            .CLOCK(clk),
+            .SLEEP_CTRL(cg_ab),
+            .RST_N(rst_n),
+            .CLOCK_GATED(cg_clk_ab));
+
+reg cg_out;
+wire cg_clk_out;
+
+always@(*)begin
+    if( state_ns==WR ||state_cs==WR || state_cs==IDLE4 || state_cs==IDLE5 || state_cs==OUTPUT)
+        cg_out = 0; 
+    else 
+        cg_out = 1; 
+end
+
+GATED_OR GATED_top_gbuff_out (
+            .CLOCK(clk),
+            .SLEEP_CTRL(cg_out),
+            .RST_N(rst_n),
+            .CLOCK_GATED(cg_clk_out));
+
+
 tpu TPU(.clk        (clk),
 	    .rst_n      (rst_n),
 	    .in_valid   (tpu_in_valid),
@@ -139,21 +173,21 @@ assign tpu_start = (state_cs==IDLE && state_ns==RD);
 //================================================================
 // Global Buffer
 //================================================================
-global_buffer GBUFF_A(  .clk     (clk       ),
+global_buffer GBUFF_A(  .clk     (cg_clk_ab       ),
                         .rst_n   (rst_n     ),
                         .wr_en   (gbuffer_wr_en_a),
                         .index   (gbuffer_idx_a),
                         .data_in (gbuffer_in_a ),
                         .data_out(gbuffer_out_a));
 
-global_buffer GBUFF_B(  .clk     (clk       ),
+global_buffer GBUFF_B(  .clk     (cg_clk_ab       ),
                         .rst_n   (rst_n     ),
                         .wr_en   (gbuffer_wr_en_b),
                         .index   (gbuffer_idx_b),
                         .data_in (gbuffer_in_b),
                         .data_out(gbuffer_out_b));
 
-global_buffer GBUFF_OUT(  .clk     (clk      ),
+global_buffer GBUFF_OUT(  .clk     (cg_clk_out      ),
                           .rst_n   (rst_n    ),
                           .wr_en   (gbuffer_wr_en_o),
                           .index   (gbuffer_idx_o),
