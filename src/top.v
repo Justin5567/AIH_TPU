@@ -240,7 +240,7 @@ always@(*)begin
 end
 
 always@(*)begin
-    if(tpu_out_ready && tpu_out_valid)
+    if(state_ns==WR)
         gbuffer_idx_o = counter;
     else if(state_cs==OUTPUT || state_cs==IDLE5)
         gbuffer_idx_o = counter;
