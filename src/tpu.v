@@ -14,6 +14,10 @@
 `include "src/define.v"
 `include "src/mult.v"
 // `include "src/GATED_OR.v"
+// `include "src/approx/Hybrid/*.v"
+// `include "src/approx/Logaritmic/ALM_SOA_W13.v"
+`include "src/approx/Non-logarithmic/R4ABM1p14.v"
+
 module tpu(
 	clk,
 	rst_n,
@@ -841,8 +845,16 @@ generate
     for (m = 0; m < `PE_SIZE; m = m + 1) begin : gen_mult
         mult u_mult( .a (mult_a[m]),
                      .b (mult_b[m]),
-                     .out (mult_out[m])
-        );
+                     .out (mult_out[m]));
+        // LOBO_10_12_6 u_mult(.x(mult_a[m]),
+        //                     .y(mult_b[m]),
+        //                     .p(mult_out[m]));
+        // ALM_SOA_W13 u_mult(.x(mult_a[m]),
+        //                     .y(mult_b[m]),
+        //                     .p(mult_out[m]));
+        // R4ABM1p14 u_mult(.x(mult_a[m]),
+        //                     .y(mult_b[m]),
+        //                     .p(mult_out[m]));
     end
 endgenerate
 // PE

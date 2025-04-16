@@ -12,7 +12,7 @@
 //############################################################################
 `include "./src/define.v"
 `timescale 1ns/10ps
-`define CYCLE_TIME 10
+`define CYCLE_TIME 15
 `define End_CYCLE  100000000
 
 module PATTERN_top(
@@ -56,6 +56,8 @@ reg [`WORD_SIZE-1:0] gbuff_a_reg [`GBUFF_ADDR_SIZE-1:0];
 reg [`WORD_SIZE-1:0] gbuff_b_reg [`GBUFF_ADDR_SIZE-1:0];
 reg [`WORD_SIZE-1:0] GOLDEN [`GBUFF_ADDR_SIZE-1:0];
 // reg [`WORD_SIZE-1:0] GBUFF [`GBUFF_ADDR_SIZE-1:0];
+
+integer clock_count;
 // ===============================================================
 // Wire & Reg Declaration
 // ===============================================================
@@ -66,17 +68,21 @@ reg [`WORD_SIZE-1:0] GOLDEN [`GBUFF_ADDR_SIZE-1:0];
 always	#(`CYCLE_TIME/2.0) clk = ~clk;
 initial	clk = 0;
 
+always@(posedge clk)begin
+    clock_count = clock_count +1;
+end
+
 // ===============================================================
 // Initial
 // ===============================================================
 initial begin
 	rst_n    = 1'b1;
 	in_valid = 1'b0;
-
+    
     // reset
 	force clk = 0;
 	reset_task;
-
+    clock_count = 0;
     err = 0;
     $readmemb("./build/matrix_a.bin", gbuff_a_reg);
     $readmemb("./build/matrix_b.bin", gbuff_b_reg);
@@ -113,8 +119,9 @@ initial begin
 		@(negedge clk);
 	end
 	#(1);
-
+    $display("[Total Cycle] %5d",clock_count);
     check_err;
+    
 	$display("\033[1;32m\033[5m[Pass] Congradulation You Pass All of the Testcases!!!\033[0;1m");
 	$finish;
 end 
@@ -149,8 +156,8 @@ task check_answer ; begin
                 $display ("                                                Your Answer:    %3d, %8b                                          ",out_byte,out_byte);
                 $display ("                                                Correct Answer: %3d, %8b                                          ",golden_byte,golden_byte);
                 $display ("----------------------------------------------------------------------------------------------------------------------");
-                repeat(1)  @(negedge clk);
-                $finish;
+                //repeat(1)  @(negedge clk);
+                //$finish;
                 err = err + 1;
             end
             else begin
