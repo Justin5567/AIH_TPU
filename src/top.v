@@ -221,7 +221,8 @@ always@(*)begin
 end
 
 always@(*)begin
-    if(tpu_out_ready && tpu_out_valid)
+    //if(tpu_out_ready && tpu_out_valid)
+    if(state_ns==WR)
         gbuffer_wr_en_o = 1;
     else
         gbuffer_wr_en_o = 0;
@@ -248,7 +249,8 @@ always@(*)begin
 end
 
 always@(*)begin
-    if(tpu_out_ready && tpu_out_valid)
+    //if(tpu_out_ready && tpu_out_valid)
+    if(state_ns==WR)
         gbuffer_in_o = tpu_data_o;
     else
         gbuffer_in_o = 0;
