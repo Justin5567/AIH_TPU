@@ -15,8 +15,8 @@
 `include "src/mult.v"
 // `include "src/GATED_OR.v"
 // `include "src/approx/Hybrid/*.v"
-// `include "src/approx/Logaritmic/ALM_SOA_W13.v"
-`include "src/approx/Non-logarithmic/R4ABM1p14.v"
+`include "src/approx/Logaritmic/ALM_SOA_W13.v"
+// `include "src/approx/Non-logarithmic/R4ABM1p14.v"
 
 module tpu(
 	clk,
@@ -38,9 +38,9 @@ input clk;
 input rst_n;
 input in_valid;
 input out_ready;
-input [`WORD_SIZE-1:0] a;
-input [`WORD_SIZE-1:0] b;
-output reg [`WORD_SIZE-1:0] out;
+input [`GBUFF_IN_LINE_SIZE-1:0] a;
+input [`GBUFF_IN_LINE_SIZE-1:0] b;
+output reg [`GBUFF_OUT_LINE_SIZE-1:0] out;
 output reg in_ready;
 output reg out_valid;
 output reg done;
@@ -67,8 +67,8 @@ reg [9:0] counter;
 
 reg [`DATA_SIZE-1:0]mult_a [`PE_SIZE-1:0];
 reg [`DATA_SIZE-1:0]mult_b [`PE_SIZE-1:0];
-wire [`DATA_SIZE-1:0]mult_out [`PE_SIZE-1:0];
-reg [`DATA_SIZE-1:0]mult_pe [`PE_SIZE-1:0];
+wire [`MULT_SIZE-1:0]mult_out [`PE_SIZE-1:0];
+reg [`GBUFF_OUT_DATA_SIZE-1:0]mult_pe [`PE_SIZE-1:0];
 // wire
 wire start;
 wire RD_done;
@@ -344,38 +344,38 @@ always@(posedge clk or negedge rst_n)begin
         end
     end
      else if(state_ns==OP)begin
-        side_buffer_a_w0         <= a[255:248];
-        side_buffer_a_w1    [ 1] <= a[247:240];
-        side_buffer_a_w2    [ 2] <= a[239:232];
-        side_buffer_a_w3    [ 3] <= a[231:224];
-        side_buffer_a_w4    [ 4] <= a[223:216];
-        side_buffer_a_w5    [ 5] <= a[215:208];
-        side_buffer_a_w6    [ 6] <= a[207:200];
-        side_buffer_a_w7    [ 7] <= a[199:192];
-        side_buffer_a_w8    [ 8] <= a[191:184];
-        side_buffer_a_w9    [ 9] <= a[183:176];
-        side_buffer_a_w10   [10] <= a[175:168];
-        side_buffer_a_w11   [11] <= a[167:160];
-        side_buffer_a_w12   [12] <= a[159:152];
-        side_buffer_a_w13   [13] <= a[151:144];
-        side_buffer_a_w14   [14] <= a[143:136];
-        side_buffer_a_w15   [15] <= a[135:128];
-        side_buffer_a_w16   [16] <= a[127:120];
-        side_buffer_a_w17   [17] <= a[119:112];
-        side_buffer_a_w18   [18] <= a[111:104];
-        side_buffer_a_w19   [19] <= a[103: 96];
-        side_buffer_a_w20   [20] <= a[ 95: 88];
-        side_buffer_a_w21   [21] <= a[ 87: 80];
-        side_buffer_a_w22   [22] <= a[ 79: 72];
-        side_buffer_a_w23   [23] <= a[ 71: 64];
-        side_buffer_a_w24   [24] <= a[ 63: 56];
-        side_buffer_a_w25   [25] <= a[ 55: 48];
-        side_buffer_a_w26   [26] <= a[ 47: 40];
-        side_buffer_a_w27   [27] <= a[ 39: 32];
-        side_buffer_a_w28   [28] <= a[ 31: 24];
-        side_buffer_a_w29   [29] <= a[ 23: 16];
-        side_buffer_a_w30   [30] <= a[ 15:  8];
-        side_buffer_a_w31   [31] <= a[  7:  0];
+        side_buffer_a_w0         <= a[511:496];
+        side_buffer_a_w1    [ 1] <= a[495:480];
+        side_buffer_a_w2    [ 2] <= a[479:464];
+        side_buffer_a_w3    [ 3] <= a[463:448];
+        side_buffer_a_w4    [ 4] <= a[447:432];
+        side_buffer_a_w5    [ 5] <= a[431:416];
+        side_buffer_a_w6    [ 6] <= a[415:400];
+        side_buffer_a_w7    [ 7] <= a[399:384];
+        side_buffer_a_w8    [ 8] <= a[383:368];
+        side_buffer_a_w9    [ 9] <= a[367:352];
+        side_buffer_a_w10   [10] <= a[351:336];
+        side_buffer_a_w11   [11] <= a[335:320];
+        side_buffer_a_w12   [12] <= a[319:304];
+        side_buffer_a_w13   [13] <= a[303:288];
+        side_buffer_a_w14   [14] <= a[287:272];
+        side_buffer_a_w15   [15] <= a[271:256];
+        side_buffer_a_w16   [16] <= a[255:240];
+        side_buffer_a_w17   [17] <= a[239:224];
+        side_buffer_a_w18   [18] <= a[223:208];
+        side_buffer_a_w19   [19] <= a[207:192];
+        side_buffer_a_w20   [20] <= a[191:176];
+        side_buffer_a_w21   [21] <= a[175:160];
+        side_buffer_a_w22   [22] <= a[159:144];
+        side_buffer_a_w23   [23] <= a[143:128];
+        side_buffer_a_w24   [24] <= a[127:112];
+        side_buffer_a_w25   [25] <= a[111: 96];
+        side_buffer_a_w26   [26] <= a[ 95: 80];
+        side_buffer_a_w27   [27] <= a[ 79: 64];
+        side_buffer_a_w28   [28] <= a[ 63: 48];
+        side_buffer_a_w29   [29] <= a[ 47: 32];
+        side_buffer_a_w30   [30] <= a[ 31: 16];
+        side_buffer_a_w31   [31] <= a[ 15:  0];
 
         for(i=0;i<1;i=i+1)begin
             side_buffer_a_w1[i] <= side_buffer_a_w1[i+1];
@@ -667,38 +667,38 @@ always@(posedge clk or negedge rst_n)begin
         end
     end
     else if(state_ns==OP)begin
-        side_buffer_b_w0         <= b[255:248];
-        side_buffer_b_w1    [ 1] <= b[247:240];
-        side_buffer_b_w2    [ 2] <= b[239:232];
-        side_buffer_b_w3    [ 3] <= b[231:224];
-        side_buffer_b_w4    [ 4] <= b[223:216];
-        side_buffer_b_w5    [ 5] <= b[215:208];
-        side_buffer_b_w6    [ 6] <= b[207:200];
-        side_buffer_b_w7    [ 7] <= b[199:192];
-        side_buffer_b_w8    [ 8] <= b[191:184];
-        side_buffer_b_w9    [ 9] <= b[183:176];
-        side_buffer_b_w10   [10] <= b[175:168];
-        side_buffer_b_w11   [11] <= b[167:160];
-        side_buffer_b_w12   [12] <= b[159:152];
-        side_buffer_b_w13   [13] <= b[151:144];
-        side_buffer_b_w14   [14] <= b[143:136];
-        side_buffer_b_w15   [15] <= b[135:128];
-        side_buffer_b_w16   [16] <= b[127:120];
-        side_buffer_b_w17   [17] <= b[119:112];
-        side_buffer_b_w18   [18] <= b[111:104];
-        side_buffer_b_w19   [19] <= b[103: 96];
-        side_buffer_b_w20   [20] <= b[ 95: 88];
-        side_buffer_b_w21   [21] <= b[ 87: 80];
-        side_buffer_b_w22   [22] <= b[ 79: 72];
-        side_buffer_b_w23   [23] <= b[ 71: 64];
-        side_buffer_b_w24   [24] <= b[ 63: 56];
-        side_buffer_b_w25   [25] <= b[ 55: 48];
-        side_buffer_b_w26   [26] <= b[ 47: 40];
-        side_buffer_b_w27   [27] <= b[ 39: 32];
-        side_buffer_b_w28   [28] <= b[ 31: 24];
-        side_buffer_b_w29   [29] <= b[ 23: 16];
-        side_buffer_b_w30   [30] <= b[ 15:  8];
-        side_buffer_b_w31   [31] <= b[  7:  0];
+        side_buffer_b_w0         <= b[511:496];
+        side_buffer_b_w1    [ 1] <= b[495:480];
+        side_buffer_b_w2    [ 2] <= b[479:464];
+        side_buffer_b_w3    [ 3] <= b[463:448];
+        side_buffer_b_w4    [ 4] <= b[447:432];
+        side_buffer_b_w5    [ 5] <= b[431:416];
+        side_buffer_b_w6    [ 6] <= b[415:400];
+        side_buffer_b_w7    [ 7] <= b[399:384];
+        side_buffer_b_w8    [ 8] <= b[383:368];
+        side_buffer_b_w9    [ 9] <= b[367:352];
+        side_buffer_b_w10   [10] <= b[351:336];
+        side_buffer_b_w11   [11] <= b[335:320];
+        side_buffer_b_w12   [12] <= b[319:304];
+        side_buffer_b_w13   [13] <= b[303:288];
+        side_buffer_b_w14   [14] <= b[287:272];
+        side_buffer_b_w15   [15] <= b[271:256];
+        side_buffer_b_w16   [16] <= b[255:240];
+        side_buffer_b_w17   [17] <= b[239:224];
+        side_buffer_b_w18   [18] <= b[223:208];
+        side_buffer_b_w19   [19] <= b[207:192];
+        side_buffer_b_w20   [20] <= b[191:176];
+        side_buffer_b_w21   [21] <= b[175:160];
+        side_buffer_b_w22   [22] <= b[159:144];
+        side_buffer_b_w23   [23] <= b[143:128];
+        side_buffer_b_w24   [24] <= b[127:112];
+        side_buffer_b_w25   [25] <= b[111: 96];
+        side_buffer_b_w26   [26] <= b[ 95: 80];
+        side_buffer_b_w27   [27] <= b[ 79: 64];
+        side_buffer_b_w28   [28] <= b[ 63: 48];
+        side_buffer_b_w29   [29] <= b[ 47: 32];
+        side_buffer_b_w30   [30] <= b[ 31: 16];
+        side_buffer_b_w31   [31] <= b[ 15:  0];
         for(i=0;i<1;i=i+1)begin
             side_buffer_b_w1[i] <= side_buffer_b_w1[i+1];
         end

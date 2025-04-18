@@ -27,17 +27,15 @@
 module TESTBED_top();
 
 wire clk, rst_n, in_valid, out_valid;
-wire [4:0]m, n, k;
-wire [255:0] gbuff_a,gbuff_b,gbuff_out;
+wire [`GBUFF_IN_LINE_SIZE-1:0] gbuff_a,gbuff_b;
+wire [`GBUFF_OUT_LINE_SIZE-1:0] gbuff_out;
+//wire [255:0] gbuff_a,gbuff_b,gbuff_out;
 top U_top(
     .clk(clk),
     .rst_n(rst_n),
     .in_valid(in_valid),
     .gbuff_a(gbuff_a),
     .gbuff_b(gbuff_b),
-    .m(m),
-    .n(n),
-    .k(k),
     .gbuff_out(gbuff_out),
     .out_valid(out_valid)
 );
@@ -48,9 +46,6 @@ PATTERN_top U_PATTERN_top(
     .in_valid(in_valid),
     .gbuff_a(gbuff_a),
     .gbuff_b(gbuff_b),
-    .m(m),
-    .n(n),
-    .k(k),
     .gbuff_out(gbuff_out),
     .out_valid(out_valid)
 );

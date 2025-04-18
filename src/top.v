@@ -13,6 +13,7 @@
 
 `include "src/define.v"
 `include "src/global_buffer.v"
+`include "src/global_buffer_out.v"
 `include "src/tpu.v"
 `include "src/GATED_OR.v"
 module top(
@@ -21,9 +22,6 @@ module top(
 	in_valid,
     gbuff_a,
     gbuff_b,
-	m,
-	n,
-	k,
     gbuff_out, 
 	out_valid
 );
@@ -34,12 +32,9 @@ module top(
 input clk;
 input rst_n;
 input in_valid;
-input [4:0] m;
-input [4:0] n;
-input [4:0] k;
-input [255:0] gbuff_a, gbuff_b;
+input [`GBUFF_IN_LINE_SIZE-1:0] gbuff_a, gbuff_b;
 output reg out_valid;
-output reg [255:0] gbuff_out;
+output reg [`GBUFF_OUT_LINE_SIZE-1:0] gbuff_out;
 // ===============================================================
 // Parameter & Integer Declaration
 // ===============================================================
@@ -63,21 +58,21 @@ reg [3:0] state_cs, state_ns;
 reg                             gbuffer_wr_en_a,
                                 gbuffer_wr_en_b;
 reg                             gbuffer_wr_en_o;
-reg  [`ROW_SIZE-1:0]            gbuffer_idx_a,
+reg  [`GBUFF_OUT_IDX_SIZE:0]    gbuffer_idx_a,
                                 gbuffer_idx_b,
                                 gbuffer_idx_o;
-reg  [`WORD_SIZE-1:0]           gbuffer_in_a,
+reg  [`GBUFF_IN_LINE_SIZE-1:0]  gbuffer_in_a,
                                 gbuffer_in_b;
-reg  [`WORD_SIZE-1:0]           gbuffer_in_o;
-wire [`WORD_SIZE-1:0]           gbuffer_out_a,
-                                gbuffer_out_b,
-                                gbuffer_out_o;
+reg  [`GBUFF_OUT_LINE_SIZE-1:0] gbuffer_in_o;
+wire [`GBUFF_IN_LINE_SIZE-1:0]  gbuffer_out_a,
+                                gbuffer_out_b;
+wire [`GBUFF_OUT_LINE_SIZE-1:0] gbuffer_out_o;
 
-reg [`ROW_SIZE+1:0] counter;
+reg [`ROW_SIZE+1:0]             counter;
 
-reg [`WORD_SIZE-1:0] tpu_data_a,
-                     tpu_data_b;
-wire[`WORD_SIZE-1:0] tpu_data_o;
+reg [`GBUFF_IN_LINE_SIZE-1:0]   tpu_data_a,
+                                tpu_data_b;
+wire[`GBUFF_OUT_LINE_SIZE-1:0]  tpu_data_o;
 
 // wire
 wire RD_done;
@@ -173,29 +168,26 @@ assign tpu_start = (state_cs==IDLE && state_ns==RD);
 //================================================================
 // Global Buffer
 //================================================================
-global_buffer GBUFF_A(  .clk     (cg_clk_ab       ),
-                        .rst_n   (rst_n     ),
+global_buffer GBUFF_A(  .clk     (cg_clk_ab),
+                        .rst_n   (rst_n),
                         .wr_en   (gbuffer_wr_en_a),
-                        .index   (gbuffer_idx_a),
+                        .index   (gbuffer_idx_a[4:0]),
                         .data_in (gbuffer_in_a ),
                         .data_out(gbuffer_out_a));
 
-global_buffer GBUFF_B(  .clk     (cg_clk_ab       ),
-                        .rst_n   (rst_n     ),
+global_buffer GBUFF_B(  .clk     (cg_clk_ab),
+                        .rst_n   (rst_n),
                         .wr_en   (gbuffer_wr_en_b),
-                        .index   (gbuffer_idx_b),
+                        .index   (gbuffer_idx_b[4:0]),
                         .data_in (gbuffer_in_b),
                         .data_out(gbuffer_out_b));
 
-global_buffer GBUFF_OUT(  .clk     (cg_clk_out      ),
-                          .rst_n   (rst_n    ),
+global_buffer_out GBUFF_OUT(  .clk     (cg_clk_out),
+                          .rst_n   (rst_n ),
                           .wr_en   (gbuffer_wr_en_o),
-                          .index   (gbuffer_idx_o),
+                          .index   (gbuffer_idx_o[4:0]),
                           .data_in (gbuffer_in_o),
                           .data_out(gbuffer_out_o));
-
-// assign gbuffer_wr_en_a = 0; // always read
-// assign gbuffer_wr_en_b = 0; // always read
 
 always@(*)begin
     if(state_ns==LOAD)begin
@@ -221,7 +213,6 @@ always@(*)begin
 end
 
 always@(*)begin
-    //if(tpu_out_ready && tpu_out_valid)
     if(state_ns==WR)
         gbuffer_wr_en_o = 1;
     else
@@ -249,7 +240,6 @@ always@(*)begin
 end
 
 always@(*)begin
-    //if(tpu_out_ready && tpu_out_valid)
     if(state_ns==WR)
         gbuffer_in_o = tpu_data_o;
     else
@@ -315,7 +305,5 @@ always@(posedge clk or negedge rst_n)begin
     else if(state_ns==OUTPUT)
         gbuff_out <=gbuffer_out_o;
 end
-
-
 
 endmodule

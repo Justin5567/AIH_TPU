@@ -15,7 +15,68 @@ import os
 #------------------------------------------------------------------------------#
 # Function Definations                                                         #
 #------------------------------------------------------------------------------#
-def write_binary_file(filename, matrix):
+
+def write_binary_file_output(filename, matrix):
+    fd = open(filename, "w")
+    row, col = matrix.shape
+
+    for r in range(row):
+        line = ""
+        for c in range(col):
+            val = matrix[r][c]
+            bin_str = format(val & ((1 << 37) - 1), '037b')  # Zero-padded 37-bit
+
+            if (c % 32) != 0:
+                line += "_"
+            line += bin_str
+
+            if (c + 1) % 32 == 0:
+                fd.write(line + "\n")
+                line = ""
+
+        # Handle partial line
+        if (col % 32) != 0:
+            remaining = 32 - (col % 32)
+            for _ in range(remaining):
+                line += "_00000000000000000000000000000000000000000"
+            fd.write(line + "\n")
+
+    fd.close()
+    print("<log> binary written in", filename)
+
+def write_binary_file_input(filename, matrix):
+    fd = open(filename, "w")
+    row, col = matrix.shape
+
+    for r in range(row):
+        line = ""
+        for c in range(col):
+            # Convert value to 16-bit binary string, zero-padded
+            val = matrix[r][c]
+            bin_str = format(val & 0xFFFF, '016b')
+
+            # Add separator if not the first value
+            if (c % 32) != 0:
+                line += "_"
+
+            line += bin_str
+
+            # Write and reset line every 32 values (512 bits)
+            if (c + 1) % 32 == 0:
+                fd.write(line + "\n")
+                line = ""
+
+        # Handle leftover values if not multiple of 32
+        if (col % 32) != 0:
+            remaining = 32 - (col % 32)
+            for _ in range(remaining):
+                line += "_0000000000000000"
+            fd.write(line + "\n")
+
+    fd.close()
+    print("<log> binary written in", filename)
+
+def write_binary_file0(filename, matrix):
 
   fd = open(filename, "w")
   row, col = matrix.shape
@@ -105,11 +166,13 @@ elif(inputs_set == "aih"):
   row_r = 32
   k     = 32
   col_r = 32
-  matrix_a = (10 * np.random.rand(row_r, k)) % 4
-  matrix_a = matrix_a.astype(int)
-  matrix_b = (10 * np.random.rand(k, col_r)) % 4
-  matrix_b = matrix_b.astype(int)
-
+  # matrix_a = (10 * np.random.rand(row_r, k)) % 4
+  # matrix_a = matrix_a.astype(int)
+  # matrix_b = (10 * np.random.rand(k, col_r)) % 4
+  # matrix_b = matrix_b.astype(int)
+  max_val = (1 << 16) - 1
+  matrix_a = np.random.randint(0, max_val, size=(row_r, k), dtype=np.uint64)
+  matrix_b = np.random.randint(0, max_val, size=(k, col_r), dtype=np.uint64)
 else:
   filename_a = inputs_set + "/matrix_a.txt" 
   filename_b = inputs_set + "/matrix_b.txt" 
@@ -178,17 +241,17 @@ print("<log> matrix definations written in ../build/matrix_define.v")
 #------------------------------------------------------------------------------#
 # Write Matrix A                                                               #
 #------------------------------------------------------------------------------#
-write_binary_file("./build/matrix_a.bin", np.transpose(matrix_a))
+write_binary_file_input("./build/matrix_a.bin", np.transpose(matrix_a))
 
 #------------------------------------------------------------------------------#
 # Write Matrix B                                                               #
 #------------------------------------------------------------------------------#
-write_binary_file("./build/matrix_b.bin", matrix_b)
+write_binary_file_input("./build/matrix_b.bin", matrix_b)
 
 #------------------------------------------------------------------------------#
 # Write golden output                                                          #
 #------------------------------------------------------------------------------#
-write_binary_file("./build/golden.bin", res)
+write_binary_file_output("./build/golden.bin", res)
 
 
 

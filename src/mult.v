@@ -4,9 +4,9 @@ module mult(a,
             out);
 
 
-input [`DATA_SIZE-1:0] a;
-input [`DATA_SIZE-1:0] b;
-output reg [`DATA_SIZE-1:0] out;
+input [15:0] a;
+input [15:0] b;
+output reg [31:0] out;
 
 always@(*)begin
     out = a*b;
